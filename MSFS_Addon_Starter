@@ -1,0 +1,171 @@
+import os
+from tkinter import *
+
+c=os.path.dirname(__file__)
+nomeArquivo = c + '\\caminhos.txt'
+
+
+# Salvar caminho 01
+def salvar_caminho_01(caminho):
+    with open(nomeArquivo, 'w') as arquivo:
+        arquivo.write('%s' % caminho.get())
+        arquivo.write('\n')
+        texto_01 = caminho.get()
+        caminho = Label(janela,text=texto_01).place(x=110,y=80,width=430,height=30)
+        botao_excluir_programa_01 = Button(janela,text='Excluir',command = lambda: excluir_caminho_01()).place(x=550,y=80,width=60,height=30)
+        botao_abrir_programa_01 = Button(janela,text='Abrir',command=lambda:abrir_programa_01()).place(x=620,y=80,width=60,height=30)
+
+
+
+# Salvar caminho 02
+def salvar_caminho_02(caminho):
+    arquivo = open(nomeArquivo, 'w')
+    arquivo.write('%s' % caminho.get())
+    arquivo.write('\n')
+    texto = caminho.get()
+    caminho = Label(janela,text=texto).place(x=110,y=120,width=430,height=30)
+    botao_excluir_programa_02 = Button(janela,text='Excluir',command = lambda: excluir_caminho_02()).place(x=550,y=120,width=60,height=30)
+    botao_abrir_programa_02 = Button(janela,text='Abrir',command=lambda: abrir_programa_02()).place(x=620,y=120,width=60,height=30)
+    arquivo.close
+
+
+# Salvar caminho 03
+def salvar_caminho_03(caminho):
+    arquivo = open(nomeArquivo, 'a')
+    arquivo.write('%s' % caminho.get())
+    arquivo.write('\n')
+    texto = caminho.get()
+    caminho = Label(janela,text=texto).place(x=110,y=160,width=430,height=30)
+    botao_excluir_programa_03 = Button(janela,text='Excluir',command = lambda: excluir_caminho_03()).place(x=550,y=160,width=60,height=30)
+    botao_abrir_programa_03 = Button(janela,text='Abrir',command=lambda: abrir_programa_03()).place(x=620,y=160,width=60,height=30)
+    arquivo.close
+
+
+# Salvar caminho 04
+def salvar_caminho_04(caminho):
+    arquivo = open(nomeArquivo, 'a')
+    arquivo.write('%s' % caminho.get())
+    arquivo.write('\n')
+    texto = caminho.get()
+    botao_excluir_programa_04 = Button(janela,text='Excluir',command = lambda: excluir_caminho_04()).place(x=550,y=200,width=60,height=30)
+    caminho = Label(janela,text=texto).place(x=110,y=200,width=430,height=30)
+    botao_abrir_programa_04 = Button(janela,text='Abrir',command=lambda: abrir_programa_04()).place(x=620,y=200,width=60,height=30)
+    arquivo.close
+
+
+# Excluir caminho 01
+def excluir_caminho_01():
+    botao_inserir_programa_01 = Button(janela, text='Inserir', command = lambda: salvar_caminho_01(caminho_programa_01)).place(x=550,y=80,width=60,height=30)
+    caminho_programa_01 = Entry(janela)
+    caminho_programa_01.place(x=110,y=80,width=430,height=30)
+    botao_abrir_programa_01 = Button(janela,text='').place(x=620,y=80,width=60,height=30)
+
+
+
+# Excluir caminho 02
+def excluir_caminho_02():
+    botao_inserir_programa_02 = Button(janela, text='Inserir', command = lambda: salvar_caminho_02(caminho_programa_02)).place(x=550,y=120,width=60,height=30)
+    caminho_programa_02 = Entry(janela)
+    caminho_programa_02.place(x=110,y=120,width=430,height=30)
+    botao_abrir_programa_02 = Button(janela,text='').place(x=620,y=120,width=60,height=30)
+
+
+# Excluir caminho 03:
+def excluir_caminho_03():
+    botao_inserir_programa_03 = Button(janela, text='Inserir', command=lambda: salvar_caminho_03(caminho_programa_03)).place(x=550,y=160,width=60,height=30)
+    caminho_programa_03 = Entry(janela)
+    caminho_programa_03.place(x=110,y=160,width=430,height=30)
+    botao_abrir_programa_04 = Button(janela,text='').place(x=620,y=160,width=60,height=30)
+
+
+#Excluir caminho 04:
+def excluir_caminho_04():
+    botao_inserir_programa_04 = Button(janela, text='Inserir', command=lambda: salvar_caminho_04(caminho_programa_04)).place(x=550,y=200,width=60,height=30)
+    caminho_programa_04 = Entry(janela)
+    caminho_programa_04.place(x=110,y=200,width=430,height=30)
+    botao_abrir_programa_04 = Button(janela,text='').place(x=620,y=200,width=60,height=30)
+
+
+# Abrir programa 01
+def abrir_programa_01():
+    with open(nomeArquivo, 'r') as arquivo:
+        dados = arquivo.readlines()
+    dados = [x.strip('\n') for x in dados]
+    os.startfile(dados[0])
+
+
+# Abrir programa 02
+def abrir_programa_02():
+    with open(nomeArquivo, 'r') as arquivo:
+        dados = arquivo.readlines()
+    dados = [x.strip('\n') for x in dados]
+    os.startfile(dados[1])
+
+
+# Abrir programa 03
+def abrir_programa_03():
+    with open(nomeArquivo, 'r') as arquivo:
+        dados = arquivo.readlines()
+    dados = [x.strip('\n') for x in dados]
+    os.startfile(dados[2])
+
+
+# Abrir programa 04
+def abrir_programa_04():
+    with open(nomeArquivo, 'r') as arquivo:
+        dados = arquivo.readlines()
+    dados = [x.strip('\n') for x in dados]
+    os.startfile(dados[3])
+
+
+# Criar janela
+janela = Tk()
+janela.title('MSFS Addons Starter - Aqui você economiza cliques!')
+janela.geometry('700x300')
+janela.configure(background='#dde')
+
+# Texto inicial do programa
+texto_janela_inicial = Label(janela, text = 'Inclua todos os programas que deseja abrir com o MSFS Addons Starter')
+texto_janela_inicial.place(x=150,y=30)
+
+
+
+# Programa 01
+label_programa_01 = Label(janela,text='Programa 01:', background='#dde',foreground='#009',anchor=W).place(x=10,y=80,width=110,height=30)
+botao_inserir_programa_01 = Button(janela, text='Inserir', command = lambda: salvar_caminho_01(caminho_programa_01)).place(x=550,y=80,width=60,height=30)
+
+caminho_programa_01 = Entry(janela)
+caminho_programa_01.place(x=110,y=80,width=430,height=30)
+
+
+# Programa 02
+label_programa_02 = Label(janela,text='Programa 02:', background='#dde',foreground='#009',anchor=W).place(x=10,y=120,width=110,height=30)
+botao_inserir_programa_02 = Button(janela, text='Inserir', command = lambda: salvar_caminho_02(caminho_programa_02)).place(x=550,y=120,width=60,height=30)
+
+caminho_programa_02 = Entry(janela)
+caminho_programa_02.place(x=110,y=120,width=430,height=30)
+
+
+# Programa 03
+label_programa_03 = Label(janela,text='Programa 03:', background='#dde',foreground='#009',anchor=W).place(x=10,y=160,width=110,height=30)
+botao_inserir_programa_03 = Button(janela, text='Inserir', command=lambda: salvar_caminho_03(caminho_programa_03)).place(x=550,y=160,width=60,height=30)
+
+caminho_programa_03 = Entry(janela)
+caminho_programa_03.place(x=110,y=160,width=430,height=30)
+
+
+# Programa 04
+label_programa_04 = Label(janela,text='Programa 04:', background='#dde',foreground='#009',anchor=W).place(x=10,y=200,width=110,height=30)
+botao_inserir_programa_04 = Button(janela, text='Inserir', command=lambda: salvar_caminho_04(caminho_programa_04)).place(x=550,y=200,width=60,height=30)
+
+caminho_programa_04 = Entry(janela)
+caminho_programa_04.place(x=110,y=200,width=430,height=30)
+
+
+# Criar botao excluir 01
+botao_excluir_programa_01 = Button(janela,text='Excluir',command = lambda: excluir_caminho_01())
+
+#Botão abrir todos os programas
+botao_abrir_todos = Button(janela,text='Abrir todos os programas').place(x=520,y=240,width=165,height=30)
+
+janela.mainloop()
