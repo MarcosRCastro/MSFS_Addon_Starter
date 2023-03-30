@@ -1,4 +1,5 @@
 import os
+from tkinter.ttk import *
 from tkinter import *
 import webbrowser as wb
 from tkinter import messagebox
@@ -8,7 +9,7 @@ from PIL import ImageTk, Image
 import win32com.client as win32
 import pyperclip as pc
 
-
+ 
 # Variáveis
 local_dos_arquivos = 'C:\\MSFS_Addon_Starter'
 primeira_ini = 0
@@ -80,11 +81,32 @@ def configuracoes():
     janela_configuracoes.resizable(False, False)
     janela_configuracoes.configure(background='#dde')
 
-    
-    escolha_idioma = StringVar()
-    escolha_idioma = Combobox(janela_configuracoes, textvariable=escolha_idioma).place(x=14,y=20,width=200,height=30)
-    escolha_idioma.current(0)
-    escolha_idioma['values'] = ('Português', 'Inglês')
+    # Idioma
+    label_escolha_de_idioma = Label(janela_configuracoes, text='Escolha o idioma:', background='#dde', anchor=W).place(x=10,y=20,width=200,height=30)
+    var_idioma = StringVar()
+    escolher_idioma = Combobox(janela_configuracoes)
+    escolher_idioma.place(x=250,y=20,width=120,height=30)
+    escolher_idioma['values'] = ('Inglês','Português')
+    escolher_idioma.current(1)
+
+    iniciar_com_windows = Label(janela_configuracoes, text='Iniciar com o Windows:', background='#dde', anchor=W).place(x=10,y=60,width=200,height=30)
+    var_iniciar_com_windows = StringVar()
+    iniciar_com_windows = Combobox(janela_configuracoes)
+    iniciar_com_windows.place(x=250,y=60,width=120,height=30)
+    iniciar_com_windows['values'] = ('Sim','Não')
+    iniciar_com_windows.current(1)
+
+    iniciar_programas_auto = Label(janela_configuracoes, text='Abrir todos programas ao executar\no MSFS Addon Starter:', background='#dde', anchor=W, justify=LEFT).place(x=10,y=100,width=200,height=30)
+    var_iniciar_programas_auto = StringVar()
+    iniciar_programas_auto = Combobox(janela_configuracoes)
+    iniciar_programas_auto.place(x=250,y=100,width=120,height=30)
+    iniciar_programas_auto['values'] = ('Sim','Não')
+    iniciar_programas_auto.current(1)
+
+
+    botao_cancelar = Button(janela_configuracoes, text='Cancelar', command= lambda: janela_configuracoes.destroy()).place(x=270,y=300,width=100,height=30)
+    #botao_confirmar = Button(janela_configuracoes, text='Confirmar').place(x=380,y=300,width=100,height=30)
+
 
 # Janela reportar Bug     
 def reportar_bug():
@@ -544,7 +566,7 @@ root.configure(background='#dde')
 menubar = Menu(root)
 root.config(menu=menubar)
 file_menu = Menu(root, tearoff=False)
-file_menu.add_command(label='Configurações',command=lambda:configuracoes())
+file_menu.add_command(label='Configurações',command=lambda:configuracoes(), foreground='#808080')
 file_menu.add_command(label='Sair',command=root.destroy)
 
 menubar.add_cascade(
@@ -711,7 +733,7 @@ botao_ajuda = Button(root,text='Ajuda', command = lambda: ajuda()).place(x=550,y
 
 
 # Versão do programa
-versao = Label(root,text='v. 0.5 (Alpha)', background='#dde').place(x=580,y=0,width=130,height=30)
+versao = Label(root,text='v. 0.5.1 (Alpha)', background='#dde').place(x=580,y=0,width=130,height=30)
 
 
 # Créditos
