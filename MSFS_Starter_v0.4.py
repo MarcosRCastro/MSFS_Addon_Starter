@@ -8,6 +8,7 @@ from PIL import ImageTk, Image
 import win32com.client as win32
 import pyperclip as pc
 
+
 # Variáveis
 local_dos_arquivos = 'C:\\MSFS_Addon_Starter'
 primeira_ini = 0
@@ -18,6 +19,7 @@ arq_caminho_03 = local_dos_arquivos + '\\caminho03.txt'
 arq_caminho_04 = local_dos_arquivos + '\\caminho04.txt'
 arq_caminho_05 = local_dos_arquivos + '\\caminho05.txt'
 arq_caminho_06 = local_dos_arquivos + '\\caminho06.txt'
+
 
 
 
@@ -69,6 +71,20 @@ def mensagem_boas_vindas():
         local_dos_arquivos = 'C:\\MSFS_Addon_Starter\\'
         with open(local_dos_arquivos + 'local.txt', 'w') as arquivo:
             arquivo.write(local_dos_arquivos)
+
+# Janela configurações
+def configuracoes():
+    janela_configuracoes = Tk()
+    janela_configuracoes.title('Configurações')
+    janela_configuracoes.geometry('500x350+520+220')
+    janela_configuracoes.resizable(False, False)
+    janela_configuracoes.configure(background='#dde')
+
+    
+    escolha_idioma = StringVar()
+    escolha_idioma = Combobox(janela_configuracoes, textvariable=escolha_idioma).place(x=14,y=20,width=200,height=30)
+    escolha_idioma.current(0)
+    escolha_idioma['values'] = ('Português', 'Inglês')
 
 # Janela reportar Bug     
 def reportar_bug():
@@ -523,21 +539,14 @@ root.resizable(False, False)
 root.configure(background='#dde')
 
 
-# Inclusão de Logotipo
-
-logo = PhotoImage(file='imagens\MSFS_starter_logo.png')
-root.wm_iconphoto(False, logo)
-
-
 # Menu
 
 menubar = Menu(root)
 root.config(menu=menubar)
 file_menu = Menu(root, tearoff=False)
-file_menu.add_command(
-    label='Sair',
-    command=root.destroy,
-)
+file_menu.add_command(label='Configurações',command=lambda:configuracoes())
+file_menu.add_command(label='Sair',command=root.destroy)
+
 menubar.add_cascade(
     label="Arquivo",
     menu=file_menu,
@@ -708,3 +717,8 @@ versao = Label(root,text='v. 0.5 (Alpha)', background='#dde').place(x=580,y=0,wi
 # Créditos
 creditos = Label(root,text='Criado por Marcos Castro (MaarquinhoO) | 2023', background='#dde')
 root.mainloop()
+
+
+
+
+# Incluir logotipo na Taskbar e janela
