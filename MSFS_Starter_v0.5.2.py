@@ -6,6 +6,10 @@ from tkinter import messagebox
 from tkinter import filedialog
 from tkinter import scrolledtext
 from pathlib import Path
+import pyperclip as pc
+import win32com.client as win32
+import datetime as date
+
 
  
 # Variáveis
@@ -84,17 +88,17 @@ def configuracoes():
 def reportar_bug():
     janela_email_bug = Tk()
     janela_email_bug.title('Alerta de Bug')
-    janela_email_bug.geometry('500x350+520+220')
+    janela_email_bug.geometry('500x150+520+220')
     janela_email_bug.resizable(False, False)
     janela_email_bug.configure(background='#dde')
     Label(janela_email_bug, text="Explique o erro abaixo:", background='#dde').place(x=140,y=20,width=200,height=30)
   
-    texto = scrolledtext.ScrolledText(janela_email_bug, wrap=WORD,
-                                      width=50, height=12).place(x=20,y=60,width=460,height=230)
-    explicacao = Entry(texto)
+    texto = Entry(janela_email_bug)
+    texto.place(x=20,y=60,width=460,height=30)
+    
 
-    botao_enviar = Button(janela_email_bug, text='Enviar', command= lambda: enviar_texto_bug(explicacao)).place(x=420,y=300,width=60,height=30)
-    botao_cancelar = Button(janela_email_bug, text='Cancelar', command= lambda: janela_email_bug.destroy()).place(x=350,y=300,width=60,height=30)
+    botao_enviar = Button(janela_email_bug, text='Enviar', command= lambda: enviar_texto_bug(texto)).place(x=420,y=110,width=60,height=30)
+    botao_cancelar = Button(janela_email_bug, text='Cancelar', command= lambda: janela_email_bug.destroy()).place(x=350,y=110,width=60,height=30)
 
 
 # Janela para fazer sugestão
@@ -106,35 +110,42 @@ def sugestao():
     janela_sugestao.configure(background='#dde')
 
     info = Label(janela_sugestao, text='Deixe sua ideia ou sugestão abaixo:', background='#dde').place(x=20,y=20,width=430,height=30)
-    explicacao = Entry(janela_sugestao).place(x=20,y=50,width=460,height=230)
-    botao_enviar = Button(janela_sugestao, text='Enviar', command= lambda: enviar_sugestao(explicacao)).place(x=420,y=300,width=60,height=30)
+    
+    texto = Entry(janela_sugestao)
+    texto.place(x=20,y=60,width=460,height=30)
+    
+    
+    botao_enviar = Button(janela_sugestao, text='Enviar', command= lambda: enviar_texto_bug(texto)).place(x=420,y=300,width=60,height=30)
     botao_cancelar = Button(janela_sugestao, text='Cancelar', command= lambda: janela_sugestao.destroy()).place(x=350,y=300,width=60,height=30)
+    
 
 
 # Função enviar texto na página de avisar sobre bug
-def enviar_texto_bug(explicacao): ##### Não está funcionando
-    print(explicacao)
-    # criar a integração com o outlook
-    #outlook = win32.Dispatch('outlook.application')
-    # criar um email
-    #email = outlook.CreateItem(0)
-    # configurar as informações do seu e-mail
-    #email.To = 'maarquinhoo@outlook.com.br'
-    #email.Subject = ('Reporte de Bug no MSFS Addon Starter | ' + data.today())
-    #email.HTMLBody = explicacao
-    #email.Send()
-    #messagebox.showinfo(message='Bug reportado! Obrigado por nos avisar.')
 
-# Função enviar sugestão na página sugestão
-def enviar_sugestao(explicacao): ##### Não está funcionando
+def enviar_texto_bug(texto): ##### Não está funcionando
     # criar a integração com o outlook
     outlook = win32.Dispatch('outlook.application')
     # criar um email
     email = outlook.CreateItem(0)
     # configurar as informações do seu e-mail
     email.To = 'maarquinhoo@outlook.com.br'
-    email.Subject = ('Sugestão para MSFS Addon Starter | ' + data.today())
-    email.HTMLBody = explicacao
+    email.Subject = ('Reporte de erro - MSFS Addon Starter | ' + date.today())
+    email.HTMLBody = texto.get()
+    email.Send()
+    messagebox.showinfo(message='Reporte de erro enviado. Obrigado pela dedicação.')
+    print('E-mail enviado!')
+
+
+# Função enviar sugestão na página sugestão
+def enviar_sugestao(texto): ##### Não está funcionando
+    # criar a integração com o outlook
+    outlook = win32.Dispatch('outlook.application')
+    # criar um email
+    email = outlook.CreateItem(0)
+    # configurar as informações do seu e-mail
+    email.To = 'maarquinhoo@outlook.com.br'
+    email.Subject = ('Sugestão para MSFS Addon Starter | ' + date.today())
+    email.HTMLBody = texto.get()
     email.Send()
     messagebox.showinfo(message='Sugestão enviada. Obrigado pela dedicação.')
 
