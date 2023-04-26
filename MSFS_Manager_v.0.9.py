@@ -23,6 +23,8 @@ caminho_04 = local_programa / 'caminho_04.txt'
 caminho_05 = local_programa / 'caminho_05.txt'
 caminho_06 = local_programa / 'caminho_06.txt'
 idioma_salvo = local_programa / 'idioma.txt'
+portugues = local_programa / 'portugues.txt'
+ingles = local_programa / 'ingles.txt'
 
 
 
@@ -32,13 +34,14 @@ idioma_salvo = local_programa / 'idioma.txt'
 def primeira_inicializacao():
     primeira_ini = local_programa
     if primeira_ini.exists():
-        print('Não é a primeira inicialização')
-        with open(idioma_salvo, 'r') as arquivo:
-            idioma_local = arquivo.readlines()
         global idioma
-        idioma = idioma_local
-        return
-
+        print('Não é a primeira inicialização')
+        if portugues.exists():
+            idioma = 0
+            return
+        if ingles.exists():
+            idioma = 1
+            return
     else:
         os.mkdir(local_programa)
         primeira_escolha_idioma()
@@ -61,7 +64,7 @@ def primeira_escolha_idioma():
 def idioma_portugues():
     global idioma
     idioma = 0
-    with open(idioma_salvo, 'w') as arquivo:
+    with open(portugues, 'w') as arquivo:
         arquivo.write('0')
     mensagem_boas_vindas()
     
@@ -70,7 +73,7 @@ def idioma_portugues():
 def idioma_ingles():
     global idioma
     idioma = 1
-    with open(idioma_salvo, 'w') as arquivo:
+    with open(ingles, 'w') as arquivo:
         arquivo.write('1')
     mensagem_boas_vindas()
     
@@ -158,6 +161,7 @@ def reportar_bug():
     
     # Inglês
     if idioma == 1:
+        janela_email_bug.title('Bug report')
         Label(janela_email_bug, text="Explain the error:").place(x=140,y=20,width=200,height=30)
     
         texto = Entry(janela_email_bug)
@@ -175,15 +179,19 @@ def sugestao():
     janela_sugestao.geometry('500x350+520+220')
     janela_sugestao.resizable(False, False)
 
-    info = Label(janela_sugestao, text='Deixe sua ideia ou sugestão abaixo:').place(x=20,y=20,width=430,height=30)
-    
-    texto = Entry(janela_sugestao)
-    texto.place(x=20,y=60,width=460,height=30)
-    
-    
-    botao_enviar = Button(janela_sugestao, text='Enviar', command= lambda: enviar_texto_bug(texto)).place(x=420,y=300,width=60,height=30)
-    botao_cancelar = Button(janela_sugestao, text='Cancelar', command= lambda: janela_sugestao.destroy()).place(x=350,y=300,width=60,height=30)
-    
+    if idioma == 0:
+        info = Label(janela_sugestao, text='Deixe sua ideia ou sugestão abaixo:').place(x=20,y=20,width=430,height=30)
+        texto = Entry(janela_sugestao)
+        texto.place(x=20,y=60,width=460,height=30)
+        botao_enviar = Button(janela_sugestao, text='Enviar', command= lambda: enviar_texto_bug(texto)).place(x=420,y=300,width=60,height=30)
+        botao_cancelar = Button(janela_sugestao, text='Cancelar', command= lambda: janela_sugestao.destroy()).place(x=350,y=300,width=60,height=30)
+    if idioma == 1:
+        janela_sugestao.title('Suggestion table')
+        info = Label(janela_sugestao, text='Tell us about what can we improve:').place(x=20,y=20,width=430,height=30)
+        texto = Entry(janela_sugestao)
+        texto.place(x=20,y=60,width=460,height=30)
+        botao_enviar = Button(janela_sugestao, text='Send', command= lambda: enviar_texto_bug(texto)).place(x=420,y=300,width=60,height=30)
+        botao_cancelar = Button(janela_sugestao, text='Cancel', command= lambda: janela_sugestao.destroy()).place(x=350,y=300,width=60,height=30)   
 
 
 # Função enviar texto na página de avisar sobre bug
@@ -224,27 +232,8 @@ def sobre():
     janela_sobre.geometry('500x350+520+220')
     janela_sobre.resizable(False, False)
 
-    # Inglês
-    if idioma == 0:
-        janela_sobre.title('About the MSFS Manager')
-        info = Label(janela_sobre, text='The "Microsoft Flight Simulator Manager (MSFS Manager)" was created by\n'
-                                        'Marcos Castro in order to facilitate the opening of all programs\n'
-                                        'used for Flight Simulation. This is the Alpha version of the MSFS Manager\n'
-                                        'and soon will receive a lot of new functionalities.\n\n'
-                                        'If you have some idea, improovment suggestions for this software, please,\n'
-                                        'let us know, because we want it to be the best possible for you.\n\n'
-                                        'This software was created to be used with MSFS, but it also can\n'
-                                        'be used to open any software you want. So use and abuse.\n\n'
-                                        'If you want to help in this software development, besides sending us\n'
-                                        'suggestions and bug reports, make us a donation. Any amount will be welcome..').place(x=20,y=5,width=450,height=250)
-
-        botao_voltar = Button(janela_sobre,text='Return',command = lambda: janela_sobre.destroy()).place(x=120,y=250,width=120,height=30)
-        botao_reportar_bug = Button(janela_sobre,text='Bug reports',command=lambda:reportar_bug()).place(x=270,y=250,width=120,height=30)
-        botao_sugestao = Button(janela_sobre, text='Suggestions', command= lambda: sugestao()).place(x=120,y=290,width=120,height=30)
-        botao_doacao = Button(janela_sobre, text='Donations', command=lambda: janela_pix()).place(x=270,y=290,width=120,height=30)
-
     # Português
-    if idioma == 1:
+    if idioma == 0:
         info = Label(janela_sobre, text='O "Microsoft Flight Simulator Manager (MSFS Manager)" foi criado pelo programador\n'
                                         'Marcos Castro com o intuito de facilitar a abertura de todos os programas\n'
                                         'utilizados para a simulação de voo. A versão Alpha do MSFS Manager\n'
@@ -262,7 +251,24 @@ def sobre():
         botao_sugestao = Button(janela_sobre, text='Enviar sugestão', command= lambda: sugestao()).place(x=120,y=290,width=120,height=30)
         botao_doacao = Button(janela_sobre, text='Fazer doação', command=lambda: janela_pix()).place(x=270,y=290,width=120,height=30)
 
+    # Inglês
+    if idioma == 1:
+        janela_sobre.title('About the MSFS Manager')
+        info = Label(janela_sobre, text='The "Microsoft Flight Simulator Manager (MSFS Manager)" was created by\n'
+                                        'Marcos Castro in order to facilitate the opening of all programs\n'
+                                        'used for Flight Simulation. This is the Alpha version of the MSFS Manager\n'
+                                        'and soon will receive a lot of new functionalities.\n\n'
+                                        'If you have some idea, improovment suggestions for this software, please,\n'
+                                        'let us know, because we want it to be the best possible for you.\n\n'
+                                        'This software was created to be used with MSFS, but it also can\n'
+                                        'be used to open any software you want. So use and abuse.\n\n'
+                                        'If you want to help in this software development, besides sending us\n'
+                                        'suggestions and bug reports, make us a donation. Any amount will be welcome..').place(x=20,y=5,width=450,height=250)
 
+        botao_voltar = Button(janela_sobre,text='Return',command = lambda: janela_sobre.destroy()).place(x=120,y=250,width=120,height=30)
+        botao_reportar_bug = Button(janela_sobre,text='Bug reports',command=lambda:reportar_bug()).place(x=270,y=250,width=120,height=30)
+        botao_sugestao = Button(janela_sobre, text='Suggestions', command= lambda: sugestao()).place(x=120,y=290,width=120,height=30)
+        botao_doacao = Button(janela_sobre, text='Donation', command=lambda: janela_pix()).place(x=270,y=290,width=120,height=30)
 
 # Função de doação em formato de PIX
 def janela_pix():
@@ -271,7 +277,7 @@ def janela_pix():
     janela_pix.geometry('500x350+520+220')
     janela_pix.resizable(False, False)
     
-    # Inglês
+    # PIX
     if idioma == 0:
         codigo = '69482510-6503-4a5c-af1a-e4b4c8ee9e4f'
         info = Label(janela_pix, text='Use a chave PIX abaixo para fazer uma doação.\n' 
@@ -281,15 +287,14 @@ def janela_pix():
         botao_copiar = Button(janela_pix, text='Copiar', command= lambda: pc.copy(codigo)).place(x=200,y=290,width=120,height=30)
         botao_voltar = Button(janela_pix, text='Voltar', command= lambda: janela_pix.destroy()).place(x=340,y=290,width=120,height=30)
 
-    # Português
+    # Buy me a Coffe
     if idioma == 1:
-        codigo = '69482510-6503-4a5c-af1a-e4b4c8ee9e4f'
-        info = Label(janela_pix, text='Use a chave PIX abaixo para fazer uma doação.\n' 
-                                        'Ajude-nos a comprar um café, até porque códigos não\n'
-                                        'existem sem boas doses de cafeína.\n\n').place(x=30,y=20,width=430,height=120)
-        info02 = Label(janela_pix, text='69482510-6503-4a5c-af1a-e4b4c8ee9e4f').place(x=30,y=100,width=430,height=120)
-        botao_copiar = Button(janela_pix, text='Copiar', command= lambda: pc.copy(codigo)).place(x=200,y=290,width=120,height=30)
-        botao_voltar = Button(janela_pix, text='Voltar', command= lambda: janela_pix.destroy()).place(x=340,y=290,width=120,height=30)
+        janela_pix.title('Donation')
+        janela_pix.geometry('480x200+520+300')
+        info = Label(janela_pix, text='Make us a donation.\n\n' 
+                                        "Help us to buy a coffe, because codes\n"
+                                        " don't exist without good doses of caffeine.\n").place(x=30,y=20,width=430,height=120)
+        botao_coffe = Button(janela_pix, text='Make a donation', command= lambda: [wb.open('https://bit.ly/40E58w3'), janela_pix.destroy()]).place(x=120,y=130,width=240,height=30)
 
 # Escolher caminho
 # Abrir pastar para escolher o   caminho do programa
@@ -297,23 +302,18 @@ def escolher_caminho_01():
     filename = filedialog.askopenfilename()
     print(filename)
     if len(filename) > 3:
-        if idioma == 0:
             with open(caminho_01, 'w') as arquivo:
                 arquivo.write('%s' % filename)
                 arquivo.write('\n')
                 texto = filename
-                caminho = Label(root,text=texto).place(x=110,y=80,width=430,height=30)
-                botao_excluir_programa_01 = Button(root,text='Delete',command = lambda: excluir_caminho_01()).place(x=550,y=80,width=60,height=30)
-                botao_abrir_programa_01 = Button(root,text='Open',command=lambda:abrir_programa_01()).place(x=620,y=80,width=60,height=30)
-        if idioma == 1:
-            with open(caminho_01, 'w') as arquivo:
-                arquivo.write('%s' % filename)
-                arquivo.write('\n')
-                texto = filename
-                caminho = Label(root,text=texto).place(x=110,y=80,width=430,height=30)
-                botao_excluir_programa_01 = Button(root,text='Excluir',command = lambda: excluir_caminho_01()).place(x=550,y=80,width=60,height=30)
-                botao_abrir_programa_01 = Button(root,text='Abrir',command=lambda:abrir_programa_01()).place(x=620,y=80,width=60,height=30)
-        
+                if idioma == 0:
+                    caminho = Label(root,text=texto).place(x=110,y=80,width=430,height=30)
+                    botao_excluir_programa_01 = Button(root,text='Excluir',command = lambda: excluir_caminho_01()).place(x=550,y=80,width=60,height=30)
+                    botao_abrir_programa_01 = Button(root,text='Abrir',command=lambda:abrir_programa_01()).place(x=620,y=80,width=60,height=30)
+                if idioma == 1:
+                    caminho = Label(root,text=texto).place(x=110,y=80,width=430,height=30)
+                    botao_excluir_programa_01 = Button(root,text='Delete',command = lambda: excluir_caminho_01()).place(x=550,y=80,width=60,height=30)
+                    botao_abrir_programa_01 = Button(root,text='Open',command=lambda:abrir_programa_01()).place(x=620,y=80,width=60,height=30)        
     else:
         return
 
@@ -325,9 +325,14 @@ def escolher_caminho_02():
             arquivo.write('%s' % filename)
             arquivo.write('\n')
             texto = filename
-            caminho = Label(root,text=texto).place(x=110,y=120,width=430,height=30)
-            botao_excluir_programa_02 = Button(root,text='Excluir',command = lambda: excluir_caminho_02()).place(x=550,y=120,width=60,height=30)
-            botao_abrir_programa_02 = Button(root,text='Abrir',command=lambda:abrir_programa_02()).place(x=620,y=120,width=60,height=30)
+            if idioma == 0:
+                caminho = Label(root,text=texto).place(x=110,y=120,width=430,height=30)
+                botao_excluir_programa_02 = Button(root,text='Excluir',command = lambda: excluir_caminho_02()).place(x=550,y=120,width=60,height=30)
+                botao_abrir_programa_02 = Button(root,text='Abrir',command=lambda:abrir_programa_02()).place(x=620,y=120,width=60,height=30)
+            if idioma == 1:
+                caminho = Label(root,text=texto).place(x=110,y=120,width=430,height=30)
+                botao_excluir_programa_02 = Button(root,text='Delete',command = lambda: excluir_caminho_02()).place(x=550,y=120,width=60,height=30)
+                botao_abrir_programa_02 = Button(root,text='Open',command=lambda:abrir_programa_02()).place(x=620,y=120,width=60,height=30)
     else:
         return
         
@@ -339,9 +344,14 @@ def escolher_caminho_03():
             arquivo.write('%s' % filename)
             arquivo.write('\n')
             texto = filename
-            caminho = Label(root,text=texto).place(x=110,y=160,width=430,height=30)
-            botao_excluir_programa_03 = Button(root,text='Excluir',command = lambda: excluir_caminho_03()).place(x=550,y=160,width=60,height=30)
-            botao_abrir_programa_03 = Button(root,text='Abrir',command=lambda:abrir_programa_03()).place(x=620,y=160,width=60,height=30)
+            if idioma == 0:
+                caminho = Label(root,text=texto).place(x=110,y=160,width=430,height=30)
+                botao_excluir_programa_03 = Button(root,text='Excluir',command = lambda: excluir_caminho_03()).place(x=550,y=160,width=60,height=30)
+                botao_abrir_programa_03 = Button(root,text='Abrir',command=lambda:abrir_programa_03()).place(x=620,y=160,width=60,height=30)
+            if idioma == 1:
+                caminho = Label(root,text=texto).place(x=110,y=160,width=430,height=30)
+                botao_excluir_programa_03 = Button(root,text='Delete',command = lambda: excluir_caminho_03()).place(x=550,y=160,width=60,height=30)
+                botao_abrir_programa_03 = Button(root,text='Open',command=lambda:abrir_programa_03()).place(x=620,y=160,width=60,height=30)
     else:
         return
 
@@ -353,9 +363,14 @@ def escolher_caminho_04():
             arquivo.write('%s' % filename)
             arquivo.write('\n')
             texto = filename
-            caminho = Label(root,text=texto).place(x=110,y=200,width=430,height=30)
-            botao_excluir_programa_04 = Button(root,text='Excluir',command = lambda: excluir_caminho_04()).place(x=550,y=200,width=60,height=30)
-            botao_abrir_programa_04 = Button(root,text='Abrir',command=lambda:abrir_programa_04()).place(x=620,y=200,width=60,height=30)
+            if idioma == 0:
+                caminho = Label(root,text=texto).place(x=110,y=200,width=430,height=30)
+                botao_excluir_programa_04 = Button(root,text='Excluir',command = lambda: excluir_caminho_04()).place(x=550,y=200,width=60,height=30)
+                botao_abrir_programa_04 = Button(root,text='Abrir',command=lambda:abrir_programa_04()).place(x=620,y=200,width=60,height=30)
+            if idioma == 1:
+                caminho = Label(root,text=texto).place(x=110,y=200,width=430,height=30)
+                botao_excluir_programa_04 = Button(root,text='Delete',command = lambda: excluir_caminho_04()).place(x=550,y=200,width=60,height=30)
+                botao_abrir_programa_04 = Button(root,text='Open',command=lambda:abrir_programa_04()).place(x=620,y=200,width=60,height=30)
     else:
         return
 
@@ -367,9 +382,14 @@ def escolher_caminho_05():
             arquivo.write('%s' % filename)
             arquivo.write('\n')
             texto = filename
-            caminho = Label(root,text=texto).place(x=110,y=240,width=430,height=30)
-            botao_excluir_programa_05 = Button(root,text='Excluir',command = lambda: excluir_caminho_05()).place(x=550,y=240,width=60,height=30)
-            botao_abrir_programa_05 = Button(root,text='Abrir',command=lambda:abrir_programa_05()).place(x=620,y=240,width=60,height=30)
+            if idioma == 0:
+                caminho = Label(root,text=texto).place(x=110,y=240,width=430,height=30)
+                botao_excluir_programa_05 = Button(root,text='Excluir',command = lambda: excluir_caminho_05()).place(x=550,y=240,width=60,height=30)
+                botao_abrir_programa_05 = Button(root,text='Abrir',command=lambda:abrir_programa_05()).place(x=620,y=240,width=60,height=30)
+            if idioma == 1:
+                caminho = Label(root,text=texto).place(x=110,y=240,width=430,height=30)
+                botao_excluir_programa_05 = Button(root,text='Delete',command = lambda: excluir_caminho_05()).place(x=550,y=240,width=60,height=30)
+                botao_abrir_programa_05 = Button(root,text='Open',command=lambda:abrir_programa_05()).place(x=620,y=240,width=60,height=30)
     else:
         return
 
@@ -381,9 +401,14 @@ def escolher_caminho_06():
             arquivo.write('%s' % filename)
             arquivo.write('\n')
             texto = filename
-            caminho = Label(root,text=texto).place(x=110,y=280,width=430,height=30)
-            botao_excluir_programa_06 = Button(root,text='Excluir',command = lambda: excluir_caminho_06()).place(x=550,y=280,width=60,height=30)
-            botao_abrir_programa_06 = Button(root,text='Abrir',command=lambda:abrir_programa_06()).place(x=620,y=280,width=60,height=30)
+            if idioma == 0:
+                caminho = Label(root,text=texto).place(x=110,y=280,width=430,height=30)
+                botao_excluir_programa_06 = Button(root,text='Excluir',command = lambda: excluir_caminho_06()).place(x=550,y=280,width=60,height=30)
+                botao_abrir_programa_06 = Button(root,text='Abrir',command=lambda:abrir_programa_06()).place(x=620,y=280,width=60,height=30)
+            if idioma == 1:
+                caminho = Label(root,text=texto).place(x=110,y=280,width=430,height=30)
+                botao_excluir_programa_06 = Button(root,text='Delete',command = lambda: excluir_caminho_06()).place(x=550,y=280,width=60,height=30)
+                botao_abrir_programa_06 = Button(root,text='Open',command=lambda:abrir_programa_06()).place(x=620,y=280,width=60,height=30)
     else:
         return
     
@@ -393,14 +418,24 @@ def salvar_caminho_01(caminho):
     
     texto = caminho.get()
     if len(texto) < 3:
-        alerta = messagebox.showinfo(
-        message='Por favor, insira um caminho válido!',
-        title='Atenção!'
-        )
+        if idioma == 0:
+            alerta = messagebox.showinfo(
+            message='Por favor, insira um caminho válido!',
+            title='Atenção!'
+            )
+        if idioma == 1:
+            alerta = messagebox.showinfo(
+            message='Please, add a valid path',
+            title='Attention!'
+            )
     else:
         caminho = Label(root,text=texto).place(x=110,y=80,width=430,height=30)
-        botao_excluir_programa_01 = Button(root,text='Excluir',command = lambda: excluir_caminho_01()).place(x=550,y=80,width=60,height=30)
-        botao_abrir_programa_01 = Button(root,text='Abrir',command=lambda:abrir_programa_01()).place(x=620,y=80,width=60,height=30)
+        if idioma == 0:
+            botao_excluir_programa_01 = Button(root,text='Excluir',command = lambda: excluir_caminho_01()).place(x=550,y=80,width=60,height=30)
+            botao_abrir_programa_01 = Button(root,text='Abrir',command=lambda:abrir_programa_01()).place(x=620,y=80,width=60,height=30)
+        if idioma == 1:
+            botao_excluir_programa_01 = Button(root,text='Delete',command = lambda: excluir_caminho_01()).place(x=550,y=80,width=60,height=30)
+            botao_abrir_programa_01 = Button(root,text='Open',command=lambda:abrir_programa_01()).place(x=620,y=80,width=60,height=30)
         with open(caminho_01, 'w') as arquivo:
             arquivo.write('%s' % texto)
             
@@ -410,14 +445,24 @@ def salvar_caminho_02(caminho):
 
     texto = caminho.get()
     if len(texto) < 3:
-        alerta = messagebox.showinfo(
-        message='Por favor, insira um caminho válido!',
-        title='Atenção!'
-        )
+        if idioma == 0:
+            alerta = messagebox.showinfo(
+            message='Por favor, insira um caminho válido!',
+            title='Atenção!'
+            )
+        if idioma == 1:
+            alerta = messagebox.showinfo(
+            message='Please, add a valid path',
+            title='Attention!'
+            )
     else:
         caminho = Label(root,text=texto).place(x=110,y=120,width=430,height=30)
-        botao_excluir_programa_01 = Button(root,text='Excluir',command = lambda: excluir_caminho_02()).place(x=550,y=120,width=60,height=30)
-        botao_abrir_programa_01 = Button(root,text='Abrir',command=lambda:abrir_programa_02()).place(x=620,y=120,width=60,height=30)
+        if idioma == 0:
+            botao_excluir_programa_01 = Button(root,text='Excluir',command = lambda: excluir_caminho_02()).place(x=550,y=120,width=60,height=30)
+            botao_abrir_programa_01 = Button(root,text='Abrir',command=lambda:abrir_programa_02()).place(x=620,y=120,width=60,height=30)
+        if idioma == 1:
+            botao_excluir_programa_01 = Button(root,text='Delete',command = lambda: excluir_caminho_02()).place(x=550,y=120,width=60,height=30)
+            botao_abrir_programa_01 = Button(root,text='Open',command=lambda:abrir_programa_02()).place(x=620,y=120,width=60,height=30)
         with open(caminho_02, 'w') as arquivo:
             arquivo.write('%s' % texto)
             
@@ -428,14 +473,24 @@ def salvar_caminho_03(caminho):
 
     texto = caminho.get()
     if len(texto) < 3:
-        alerta = messagebox.showinfo(
-        message='Por favor, insira um caminho válido!',
-        title='Atenção!'
-        )
+        if idioma == 0:
+            alerta = messagebox.showinfo(
+            message='Por favor, insira um caminho válido!',
+            title='Atenção!'
+            )
+        if idioma == 1:
+            alerta = messagebox.showinfo(
+            message='Please, add a valid path',
+            title='Attention!'
+            )   
     else:
         caminho = Label(root,text=texto).place(x=110,y=160,width=430,height=30)
-        botao_excluir_programa_01 = Button(root,text='Excluir',command = lambda: excluir_caminho_03()).place(x=550,y=160,width=60,height=30)
-        botao_abrir_programa_01 = Button(root,text='Abrir',command=lambda:abrir_programa_03()).place(x=620,y=160,width=60,height=30)
+        if idioma == 0:
+            botao_excluir_programa_01 = Button(root,text='Excluir',command = lambda: excluir_caminho_03()).place(x=550,y=160,width=60,height=30)
+            botao_abrir_programa_01 = Button(root,text='Abrir',command=lambda:abrir_programa_03()).place(x=620,y=160,width=60,height=30)
+        if idioma == 1:
+            botao_excluir_programa_01 = Button(root,text='Delete',command = lambda: excluir_caminho_03()).place(x=550,y=160,width=60,height=30)
+            botao_abrir_programa_01 = Button(root,text='Open',command=lambda:abrir_programa_03()).place(x=620,y=160,width=60,height=30)
         with open(caminho_03, 'w') as arquivo:
             arquivo.write('%s' % texto)
             
@@ -445,14 +500,24 @@ def salvar_caminho_04(caminho):
     
     texto = caminho.get()
     if len(texto) < 3:
-        alerta = messagebox.showinfo(
-        message='Por favor, insira um caminho válido!',
-        title='Atenção!'
-        )
+        if idioma == 0:
+            alerta = messagebox.showinfo(
+            message='Por favor, insira um caminho válido!',
+            title='Atenção!'
+            )
+        if idioma == 1:
+            alerta = messagebox.showinfo(
+            message='Please, add a valid path',
+            title='Attention!'
+            )
     else:
         caminho = Label(root,text=texto).place(x=110,y=200,width=430,height=30)
-        botao_excluir_programa_01 = Button(root,text='Excluir',command = lambda: excluir_caminho_04()).place(x=550,y=200,width=60,height=30)
-        botao_abrir_programa_01 = Button(root,text='Abrir',command=lambda:abrir_programa_04()).place(x=620,y=200,width=60,height=30)
+        if idioma == 0:
+            botao_excluir_programa_01 = Button(root,text='Excluir',command = lambda: excluir_caminho_04()).place(x=550,y=200,width=60,height=30)
+            botao_abrir_programa_01 = Button(root,text='Abrir',command=lambda:abrir_programa_04()).place(x=620,y=200,width=60,height=30)
+        if idioma == 1:
+            botao_excluir_programa_01 = Button(root,text='Delete',command = lambda: excluir_caminho_04()).place(x=550,y=200,width=60,height=30)
+            botao_abrir_programa_01 = Button(root,text='Open',command=lambda:abrir_programa_04()).place(x=620,y=200,width=60,height=30)
         with open(caminho_04, 'w') as arquivo:
             arquivo.write('%s' % texto)
             
@@ -462,14 +527,25 @@ def salvar_caminho_05(caminho):
     
     texto = caminho.get()
     if len(texto) < 3:
-        alerta = messagebox.showinfo(
-        message='Por favor, insira um caminho válido!',
-        title='Atenção!'
+        if idioma == 0:
+            alerta = messagebox.showinfo(
+            message='Por favor, insira um caminho válido!',
+            title='Atenção!'
+            )
+        if idioma == 1:
+            alerta = messagebox.showinfo(
+            message='Please, add a valid path',
+            title='Attention!'
             )
     else:
         caminho = Label(root,text=texto).place(x=110,y=240,width=430,height=30)
-        botao_excluir_programa_01 = Button(root,text='Excluir',command = lambda: excluir_caminho_05()).place(x=550,y=240,width=60,height=30)
-        botao_abrir_programa_01 = Button(root,text='Abrir',command=lambda:abrir_programa_05()).place(x=620,y=240,width=60,height=30)
+        if idioma == 0:
+            botao_excluir_programa_01 = Button(root,text='Excluir',command = lambda: excluir_caminho_05()).place(x=550,y=240,width=60,height=30)
+            botao_abrir_programa_01 = Button(root,text='Abrir',command=lambda:abrir_programa_05()).place(x=620,y=240,width=60,height=30)
+        if idioma == 1:
+            botao_excluir_programa_01 = Button(root,text='Delete',command = lambda: excluir_caminho_05()).place(x=550,y=240,width=60,height=30)
+            botao_abrir_programa_01 = Button(root,text='Open',command=lambda:abrir_programa_05()).place(x=620,y=240,width=60,height=30)
+
         with open(caminho_05, 'w') as arquivo:
             arquivo.write('%s' % texto)
             
@@ -479,14 +555,24 @@ def salvar_caminho_06(caminho):
     
     texto = caminho.get()
     if len(texto) < 3:
-        alerta = messagebox.showinfo(
-        message='Por favor, insira um caminho válido!',
-        title='Atenção!'
+        if idioma == 0:
+            alerta = messagebox.showinfo(
+            message='Por favor, insira um caminho válido!',
+            title='Atenção!'
+            )
+        if idioma == 1:
+            alerta = messagebox.showinfo(
+            message='Please, add a valid path',
+            title='Attention!'
             )
     else:
         caminho = Label(root,text=texto).place(x=110,y=280,width=430,height=30)
-        botao_excluir_programa_01 = Button(root,text='Excluir',command = lambda: excluir_caminho_06()).place(x=550,y=280,width=60,height=30)
-        botao_abrir_programa_01 = Button(root,text='Abrir',command=lambda:abrir_programa_06()).place(x=620,y=280,width=60,height=30)
+        if idioma == 0:
+            botao_excluir_programa_01 = Button(root,text='Excluir',command = lambda: excluir_caminho_06()).place(x=550,y=280,width=60,height=30)
+            botao_abrir_programa_01 = Button(root,text='Abrir',command=lambda:abrir_programa_06()).place(x=620,y=280,width=60,height=30)
+        if idioma == 1:
+            botao_excluir_programa_01 = Button(root,text='Delete',command = lambda: excluir_caminho_06()).place(x=550,y=280,width=60,height=30)
+            botao_abrir_programa_01 = Button(root,text='Open',command=lambda:abrir_programa_06()).place(x=620,y=280,width=60,height=30)
         with open(caminho_06, 'w') as arquivo:
             arquivo.write('%s' % caminho.get())
             
@@ -499,10 +585,15 @@ def procurar_caminnho_01():
         arquivo.write('%s' % caminho)
         arquivo.write('\n')
         texto = caminho
-        if len(texto) > 3:      
-            caminho = Label(root,text=texto).place(x=110,y=80,width=430,height=30)
-            botao_excluir_programa_01 = Button(root,text='Excluir',command = lambda: excluir_caminho_01()).place(x=550,y=80,width=60,height=30)
-            botao_abrir_programa_01 = Button(root,text='Abrir',command=lambda:abrir_programa_01()).place(x=620,y=80,width=60,height=30)
+        if len(texto) > 3:  
+            if idioma == 0:    
+                caminho = Label(root,text=texto).place(x=110,y=80,width=430,height=30)
+                botao_excluir_programa_01 = Button(root,text='Excluir',command = lambda: excluir_caminho_01()).place(x=550,y=80,width=60,height=30)
+                botao_abrir_programa_01 = Button(root,text='Abrir',command=lambda:abrir_programa_01()).place(x=620,y=80,width=60,height=30)
+            if idioma == 1:    
+                caminho = Label(root,text=texto).place(x=110,y=80,width=430,height=30)
+                botao_excluir_programa_01 = Button(root,text='Delete',command = lambda: excluir_caminho_01()).place(x=550,y=80,width=60,height=30)
+                botao_abrir_programa_01 = Button(root,text='Open',command=lambda:abrir_programa_01()).place(x=620,y=80,width=60,height=30)
         else:
             return
 
@@ -513,9 +604,14 @@ def procurar_caminnho_02():
         arquivo.write('%s' % caminho)
         arquivo.write('\n')
         texto = caminho
-        caminho = Label(root,text=texto).place(x=110,y=120,width=430,height=30)
-        botao_excluir_programa_02 = Button(root,text='Excluir',command = lambda: excluir_caminho_02()).place(x=550,y=80,width=60,height=30)
-        botao_abrir_programa_02 = Button(root,text='Abrir',command=lambda:abrir_programa_02()).place(x=620,y=80,width=60,height=30)
+        if idioma == 0:
+            caminho = Label(root,text=texto).place(x=110,y=120,width=430,height=30)
+            botao_excluir_programa_02 = Button(root,text='Excluir',command = lambda: excluir_caminho_02()).place(x=550,y=80,width=60,height=30)
+            botao_abrir_programa_02 = Button(root,text='Abrir',command=lambda:abrir_programa_02()).place(x=620,y=80,width=60,height=30)
+        if idioma == 1:
+            caminho = Label(root,text=texto).place(x=110,y=120,width=430,height=30)
+            botao_excluir_programa_02 = Button(root,text='Delete',command = lambda: excluir_caminho_02()).place(x=550,y=80,width=60,height=30)
+            botao_abrir_programa_02 = Button(root,text='Open',command=lambda:abrir_programa_02()).place(x=620,y=80,width=60,height=30)
 
 # Procurar caminho 03
 def procurar_caminnho_03():
@@ -523,9 +619,14 @@ def procurar_caminnho_03():
         arquivo.write('%s' % caminho)
         arquivo.write('\n')
         texto = caminho
-        caminho = Label(root,text=texto).place(x=110,y=160,width=430,height=30)
-        botao_excluir_programa_03 = Button(root,text='Excluir',command = lambda: excluir_caminho_03()).place(x=550,y=80,width=60,height=30)
-        botao_abrir_programa_03 = Button(root,text='Abrir',command=lambda:abrir_programa_03()).place(x=620,y=80,width=60,height=30)
+        if idioma == 0:
+            caminho = Label(root,text=texto).place(x=110,y=160,width=430,height=30)
+            botao_excluir_programa_03 = Button(root,text='Excluir',command = lambda: excluir_caminho_03()).place(x=550,y=80,width=60,height=30)
+            botao_abrir_programa_03 = Button(root,text='Abrir',command=lambda:abrir_programa_03()).place(x=620,y=80,width=60,height=30)
+        if idioma == 1:
+            caminho = Label(root,text=texto).place(x=110,y=160,width=430,height=30)
+            botao_excluir_programa_03 = Button(root,text='Delete',command = lambda: excluir_caminho_03()).place(x=550,y=80,width=60,height=30)
+            botao_abrir_programa_03 = Button(root,text='Open',command=lambda:abrir_programa_03()).place(x=620,y=80,width=60,height=30)
 
 # Procurar caminho 04
 def procurar_caminnho_04():
@@ -533,9 +634,14 @@ def procurar_caminnho_04():
         arquivo.write('%s' % caminho)
         arquivo.write('\n')
         texto = caminho
-        caminho = Label(root,text=texto).place(x=110,y=200,width=430,height=30)
-        botao_excluir_programa_04 = Button(root,text='Excluir',command = lambda: excluir_caminho_04()).place(x=550,y=80,width=60,height=30)
-        botao_abrir_programa_04 = Button(root,text='Abrir',command=lambda:abrir_programa_04()).place(x=620,y=80,width=60,height=30)
+        if idioma == 0:
+            caminho = Label(root,text=texto).place(x=110,y=200,width=430,height=30)
+            botao_excluir_programa_04 = Button(root,text='Excluir',command = lambda: excluir_caminho_04()).place(x=550,y=80,width=60,height=30)
+            botao_abrir_programa_04 = Button(root,text='Abrir',command=lambda:abrir_programa_04()).place(x=620,y=80,width=60,height=30)
+        if idioma == 1:
+            caminho = Label(root,text=texto).place(x=110,y=200,width=430,height=30)
+            botao_excluir_programa_04 = Button(root,text='Delete',command = lambda: excluir_caminho_04()).place(x=550,y=80,width=60,height=30)
+            botao_abrir_programa_04 = Button(root,text='Open',command=lambda:abrir_programa_04()).place(x=620,y=80,width=60,height=30)
 
 # Procurar caminho 05
 def procurar_caminnho_05():
@@ -543,9 +649,14 @@ def procurar_caminnho_05():
         arquivo.write('%s' % caminho)
         arquivo.write('\n')
         texto = caminho
-        caminho = Label(root,text=texto).place(x=110,y=240,width=430,height=30)
-        botao_excluir_programa_05 = Button(root,text='Excluir',command = lambda: excluir_caminho_05()).place(x=550,y=80,width=60,height=30)
-        botao_abrir_programa_05 = Button(root,text='Abrir',command=lambda:abrir_programa_05()).place(x=620,y=80,width=60,height=30)
+        if idioma == 0:
+            caminho = Label(root,text=texto).place(x=110,y=240,width=430,height=30)
+            botao_excluir_programa_05 = Button(root,text='Excluir',command = lambda: excluir_caminho_05()).place(x=550,y=80,width=60,height=30)
+            botao_abrir_programa_05 = Button(root,text='Abrir',command=lambda:abrir_programa_05()).place(x=620,y=80,width=60,height=30)
+        if idioma == 1:
+            caminho = Label(root,text=texto).place(x=110,y=240,width=430,height=30)
+            botao_excluir_programa_05 = Button(root,text='Delete',command = lambda: excluir_caminho_05()).place(x=550,y=80,width=60,height=30)
+            botao_abrir_programa_05 = Button(root,text='Open',command=lambda:abrir_programa_05()).place(x=620,y=80,width=60,height=30)
 
 # Procurar caminho 06
 def procurar_caminnho_06():
@@ -553,64 +664,93 @@ def procurar_caminnho_06():
         arquivo.write('%s' % caminho)
         arquivo.write('\n')
         texto = caminho
-        caminho = Label(root,text=texto).place(x=110,y=280,width=430,height=30)
-        botao_excluir_programa_06 = Button(root,text='Excluir',command = lambda: excluir_caminho_06()).place(x=550,y=80,width=60,height=30)
-        botao_abrir_programa_06 = Button(root,text='Abrir',command=lambda:abrir_programa_06()).place(x=620,y=80,width=60,height=30)
+        if idioma == 0:
+            caminho = Label(root,text=texto).place(x=110,y=280,width=430,height=30)
+            botao_excluir_programa_06 = Button(root,text='Excluir',command = lambda: excluir_caminho_06()).place(x=550,y=80,width=60,height=30)
+            botao_abrir_programa_06 = Button(root,text='Abrir',command=lambda:abrir_programa_06()).place(x=620,y=80,width=60,height=30)
+        if idioma == 1:
+            caminho = Label(root,text=texto).place(x=110,y=280,width=430,height=30)
+            botao_excluir_programa_06 = Button(root,text='Delete',command = lambda: excluir_caminho_06()).place(x=550,y=80,width=60,height=30)
+            botao_abrir_programa_06 = Button(root,text='Open',command=lambda:abrir_programa_06()).place(x=620,y=80,width=60,height=30)
 
 
 
 # Excluir caminho 01
 def excluir_caminho_01():
-    botao_inserir_programa_01 = Button(root, text='Inserir', command = lambda: salvar_caminho_01(caminho_programa_01)).place(x=550,y=80,width=60,height=30)
     caminho_programa_01 = Entry(root)
     caminho_programa_01.place(x=110,y=80,width=430,height=30)
     botao_abrir_programa_01 = Button(root,text='').place(x=620,y=80,width=60,height=30)
-    botao_procurar_programa_01 = Button(root, text='Procurar', command = lambda: escolher_caminho_01()).place(x=620,y=80,width=60,height=30)
+    if idioma == 0:
+        botao_procurar_programa_01 = Button(root, text='Procurar', command = lambda: escolher_caminho_01()).place(x=620,y=80,width=60,height=30)
+        botao_inserir_programa_01 = Button(root, text='Inserir', command = lambda: salvar_caminho_01(caminho_programa_01)).place(x=550,y=80,width=60,height=30)    
+    if idioma == 1:
+        botao_procurar_programa_01 = Button(root, text='Search', command = lambda: escolher_caminho_01()).place(x=620,y=80,width=60,height=30)
+        botao_inserir_programa_01 = Button(root, text='Add', command = lambda: salvar_caminho_01(caminho_programa_01)).place(x=550,y=80,width=60,height=30)    
     os.remove(caminho_01)
 
 # Excluir caminho 02
 def excluir_caminho_02():
-    botao_inserir_programa_02 = Button(root, text='Inserir', command = lambda: salvar_caminho_02(caminho_programa_02)).place(x=550,y=120,width=60,height=30)
     caminho_programa_02 = Entry(root)
     caminho_programa_02.place(x=110,y=120,width=430,height=30)
     botao_abrir_programa_02 = Button(root,text='').place(x=620,y=120,width=60,height=30)
-    botao_procurar_programa_02 = Button(root, text='Procurar', command = lambda: escolher_caminho_02()).place(x=620,y=120,width=60,height=30)
+    if idioma == 0:
+        botao_inserir_programa_02 = Button(root, text='Inserir', command = lambda: salvar_caminho_02(caminho_programa_02)).place(x=550,y=120,width=60,height=30)
+        botao_procurar_programa_02 = Button(root, text='Procurar', command = lambda: escolher_caminho_02()).place(x=620,y=120,width=60,height=30)
+    if idioma == 1:
+        botao_inserir_programa_02 = Button(root, text='Add', command = lambda: salvar_caminho_02(caminho_programa_02)).place(x=550,y=120,width=60,height=30)
+        botao_procurar_programa_02 = Button(root, text='Search', command = lambda: escolher_caminho_02()).place(x=620,y=120,width=60,height=30)
     os.remove(caminho_02)
 
 # Excluir caminho 03
 def excluir_caminho_03():
-    botao_inserir_programa_03 = Button(root, text='Inserir', command = lambda: salvar_caminho_03(caminho_programa_03)).place(x=550,y=160,width=60,height=30)
     caminho_programa_03 = Entry(root)
     caminho_programa_03.place(x=110,y=160,width=430,height=30)
     botao_abrir_programa_03 = Button(root,text='').place(x=620,y=160,width=60,height=30)
-    botao_procurar_programa_03 = Button(root, text='Procurar', command = lambda: escolher_caminho_03()).place(x=620,y=160,width=60,height=30)
+    if idioma == 0:
+        botao_inserir_programa_03 = Button(root, text='Inserir', command = lambda: salvar_caminho_03(caminho_programa_03)).place(x=550,y=160,width=60,height=30)
+        botao_procurar_programa_03 = Button(root, text='Procurar', command = lambda: escolher_caminho_03()).place(x=620,y=160,width=60,height=30)
+    if idioma == 1:
+        botao_inserir_programa_03 = Button(root, text='Add', command = lambda: salvar_caminho_03(caminho_programa_03)).place(x=550,y=160,width=60,height=30)
+        botao_procurar_programa_03 = Button(root, text='Search', command = lambda: escolher_caminho_03()).place(x=620,y=160,width=60,height=30)    
     os.remove(caminho_03)
 
 # Excluir caminho 04
 def excluir_caminho_04():
-    botao_inserir_programa_04 = Button(root, text='Inserir', command = lambda: salvar_caminho_04(caminho_programa_04)).place(x=550,y=200,width=60,height=30)
     caminho_programa_04 = Entry(root)
     caminho_programa_04.place(x=110,y=200,width=430,height=30)
     botao_abrir_programa_04 = Button(root,text='').place(x=620,y=200,width=60,height=30)
-    botao_procurar_programa_04 = Button(root, text='Procurar', command = lambda: escolher_caminho_04()).place(x=620,y=200,width=60,height=30)
+    if idioma == 0:
+        botao_inserir_programa_04 = Button(root, text='Inserir', command = lambda: salvar_caminho_04(caminho_programa_04)).place(x=550,y=200,width=60,height=30)    
+        botao_procurar_programa_04 = Button(root, text='Procurar', command = lambda: escolher_caminho_04()).place(x=620,y=200,width=60,height=30)
+    if idioma == 1:
+        botao_inserir_programa_04 = Button(root, text='Add', command = lambda: salvar_caminho_04(caminho_programa_04)).place(x=550,y=200,width=60,height=30)    
+        botao_procurar_programa_04 = Button(root, text='Search', command = lambda: escolher_caminho_04()).place(x=620,y=200,width=60,height=30)
     os.remove(caminho_04)
 
 # Excluir caminho 05
 def excluir_caminho_05():
-    botao_inserir_programa_05 = Button(root, text='Inserir', command = lambda: salvar_caminho_05(caminho_programa_05)).place(x=550,y=240,width=60,height=30)
     caminho_programa_05 = Entry(root)
     caminho_programa_05.place(x=110,y=240,width=430,height=30)
     botao_abrir_programa_05 = Button(root,text='').place(x=620,y=240,width=60,height=30)
-    botao_procurar_programa_05 = Button(root, text='Procurar', command = lambda: escolher_caminho_05()).place(x=620,y=240,width=60,height=30)
+    if idioma == 0:
+        botao_inserir_programa_05 = Button(root, text='Inserir', command = lambda: salvar_caminho_05(caminho_programa_05)).place(x=550,y=240,width=60,height=30)    
+        botao_procurar_programa_05 = Button(root, text='Procurar', command = lambda: escolher_caminho_05()).place(x=620,y=240,width=60,height=30)
+    if idioma == 1:
+        botao_inserir_programa_05 = Button(root, text='Add', command = lambda: salvar_caminho_05(caminho_programa_05)).place(x=550,y=240,width=60,height=30)    
+        botao_procurar_programa_05 = Button(root, text='Search', command = lambda: escolher_caminho_05()).place(x=620,y=240,width=60,height=30)
     os.remove(caminho_05)
 
 # Excluir caminho 06
 def excluir_caminho_06():
-    botao_inserir_programa_06 = Button(root, text='Inserir', command = lambda: salvar_caminho_06(caminho_programa_06)).place(x=550,y=280,width=60,height=30)
     caminho_programa_06 = Entry(root)
     caminho_programa_06.place(x=110,y=280,width=430,height=30)
     botao_abrir_programa_06 = Button(root,text='').place(x=620,y=280,width=60,height=30)
-    botao_procurar_programa_06 = Button(root, text='Procurar', command = lambda: escolher_caminho_06()).place(x=620,y=280,width=60,height=30)
+    if idioma == 0:
+        botao_inserir_programa_06 = Button(root, text='Inserir', command = lambda: salvar_caminho_06(caminho_programa_06)).place(x=550,y=280,width=60,height=30)
+        botao_procurar_programa_06 = Button(root, text='Procurar', command = lambda: escolher_caminho_06()).place(x=620,y=280,width=60,height=30)
+    if idioma == 1:
+        botao_inserir_programa_06 = Button(root, text='Add', command = lambda: salvar_caminho_06(caminho_programa_06)).place(x=550,y=280,width=60,height=30)
+        botao_procurar_programa_06 = Button(root, text='Search', command = lambda: escolher_caminho_06()).place(x=620,y=280,width=60,height=30)
     os.remove(caminho_06)
 
 
@@ -696,11 +836,16 @@ def abrir_todos():
         os.startfile(dados[0])
         
     else:
-        alerta = messagebox.showinfo(
-        message='Por favor, insira o caminho de algum programa para que seja aberto!',
-        title='Atenção!'
-            )
-
+        if idioma == 0:
+            alerta = messagebox.showinfo(
+            message='Por favor, insira o caminho de algum programa para que seja aberto!',
+            title='Atenção!'
+                )
+        if idioma == 1:
+            alerta = messagebox.showinfo(
+            message='Please, insert a valid path!',
+            title='Attention!'
+                )
 
 # Função do botão ajuda
 def ajuda():
@@ -714,6 +859,7 @@ def ajuda():
 idioma = 1
 primeira_inicializacao()
 
+
 # Criar root principal
 root = Tk()
 root.title('MSFS Manager')
@@ -722,43 +868,81 @@ root.resizable(False, False)
 
 
 # Menu
+if idioma == 0:
+    menubar = Menu(root)
+    root.config(menu=menubar)
+    file_menu = Menu(root, tearoff=False)
+    file_menu.add_command(label='Configurações',command=lambda:configuracoes(), foreground='#808080')
+    file_menu.add_command(label='Sair',command=root.destroy)
 
-menubar = Menu(root)
-root.config(menu=menubar)
-file_menu = Menu(root, tearoff=False)
-file_menu.add_command(label='Configurações',command=lambda:configuracoes(), foreground='#808080')
-file_menu.add_command(label='Sair',command=root.destroy)
+    menubar.add_cascade(
+        label="Arquivo",
+        menu=file_menu,
+        underline=0
+    )
+    options_menu = Menu(
+        menubar,
+        tearoff=0
+    )
 
-menubar.add_cascade(
-    label="Arquivo",
-    menu=file_menu,
-    underline=0
-)
-options_menu = Menu(
-    menubar,
-    tearoff=0
-)
+    options_menu.add_command(label='Idioma', foreground='#808080')
+    options_menu.add_command(label='Deixar sugestão', foreground='#808080')
+    options_menu.add_command(label='Reportar bug', foreground='#808080')
 
-options_menu.add_command(label='Idioma', foreground='#808080')
-options_menu.add_command(label='Deixar sugestão', foreground='#808080')
-options_menu.add_command(label='Reportar bug', foreground='#808080')
+    menubar.add_cascade(
+        label="Opções",
+        menu=options_menu
+    )
+    help_menu = Menu(
+        menubar,
+        tearoff=0
+    )
+    help_menu.add_command(label='Café?!', command=lambda: janela_pix())
+    help_menu.add_command(label='Ajuda',  command = lambda: ajuda())
+    help_menu.add_command(label='Sobre...', command= lambda: sobre())
 
-menubar.add_cascade(
-    label="Opções",
-    menu=options_menu
-)
-help_menu = Menu(
-    menubar,
-    tearoff=0
-)
-help_menu.add_command(label='Café?!', command=lambda: janela_pix())
-help_menu.add_command(label='Ajuda',  command = lambda: ajuda())
-help_menu.add_command(label='Sobre...', command= lambda: sobre())
+    menubar.add_cascade(
+        label="Ajuda",
+        menu=help_menu
+    )
+    
+if idioma == 1:
+    menubar = Menu(root)
+    root.config(menu=menubar)
+    file_menu = Menu(root, tearoff=False)
+    file_menu.add_command(label='Configuration',command=lambda:configuracoes(), foreground='#808080')
+    file_menu.add_command(label='Quit',command=root.destroy)
 
-menubar.add_cascade(
-    label="Ajuda",
-    menu=help_menu
-)
+    menubar.add_cascade(
+        label="File",
+        menu=file_menu,
+        underline=0
+    )
+    options_menu = Menu(
+        menubar,
+        tearoff=0
+    )
+
+    options_menu.add_command(label='Language', foreground='#808080')
+    options_menu.add_command(label='Suggestion', foreground='#808080')
+    options_menu.add_command(label='Bug report', foreground='#808080')
+
+    menubar.add_cascade(
+        label="Option",
+        menu=options_menu
+    )
+    help_menu = Menu(
+        menubar,
+        tearoff=0
+    )
+    help_menu.add_command(label='Help',  command = lambda: ajuda())
+    help_menu.add_command(label='Coffe?!', command=lambda: janela_pix())
+    help_menu.add_command(label='About...', command= lambda: sobre())
+
+    menubar.add_cascade(
+        label="Help",
+        menu=help_menu
+    )
 
 
 
@@ -777,17 +961,27 @@ if os.path.exists(caminho_01):
         texto = arquivo.readlines()
         texto = [x.strip('\n') for x in texto]
         caminho = Label(root,text=texto).place(x=110,y=80,width=430,height=30)
-        label_programa_01 = Label(root,text='Programa 01:',anchor=W).place(x=10,y=80,width=110,height=30)
-        botao_excluir_programa_01 = Button(root,text='Excluir',command = lambda: excluir_caminho_01()).place(x=550,y=80,width=60,height=30)
-        botao_abrir_programa_01 = Button(root,text='Abrir',command=lambda:abrir_programa_01()).place(x=620,y=80,width=60,height=30)
-        
+        if idioma == 0:
+            label_programa_01 = Label(root,text='Programa 01:',anchor=W).place(x=10,y=80,width=110,height=30)
+            botao_excluir_programa_01 = Button(root,text='Excluir',command = lambda: excluir_caminho_01()).place(x=550,y=80,width=60,height=30)
+            botao_abrir_programa_01 = Button(root,text='Abrir',command=lambda:abrir_programa_01()).place(x=620,y=80,width=60,height=30)
+        if idioma == 1:
+            label_programa_01 = Label(root,text='Program 01:',anchor=W).place(x=10,y=80,width=110,height=30)
+            botao_excluir_programa_01 = Button(root,text='Delete',command = lambda: excluir_caminho_01()).place(x=550,y=80,width=60,height=30)
+            botao_abrir_programa_01 = Button(root,text='Open',command=lambda:abrir_programa_01()).place(x=620,y=80,width=60,height=30)          
 else:
-    label_programa_01 = Label(root,text='Programa 01:',anchor=W).place(x=10,y=80,width=110,height=30)
-    botao_inserir_programa_01 = Button(root, text='Inserir', command = lambda: salvar_caminho_01(caminho_programa_01)).place(x=550,y=80,width=60,height=30)
-    botao_procurar_programa_01 = Button(root, text='Procurar', command = lambda: escolher_caminho_01()).place(x=620,y=80,width=60,height=30)
-
-    caminho_programa_01 = Entry(root)
-    caminho_programa_01.place(x=110,y=80,width=430,height=30)
+        if idioma == 0:
+            label_programa_01 = Label(root,text='Programa 01:',anchor=W).place(x=10,y=80,width=110,height=30)
+            botao_inserir_programa_01 = Button(root, text='Inserir', command = lambda: salvar_caminho_01(caminho_programa_01)).place(x=550,y=80,width=60,height=30)
+            botao_procurar_programa_01 = Button(root, text='Procurar', command = lambda: escolher_caminho_01()).place(x=620,y=80,width=60,height=30)
+            caminho_programa_01 = Entry(root)
+            caminho_programa_01.place(x=110,y=80,width=430,height=30)
+        if idioma == 1:
+            label_programa_01 = Label(root,text='Program 01:',anchor=W).place(x=10,y=80,width=110,height=30)
+            botao_inserir_programa_01 = Button(root, text='Add', command = lambda: salvar_caminho_01(caminho_programa_01)).place(x=550,y=80,width=60,height=30)
+            botao_procurar_programa_01 = Button(root, text='Search', command = lambda: escolher_caminho_01()).place(x=620,y=80,width=60,height=30)
+            caminho_programa_01 = Entry(root)
+            caminho_programa_01.place(x=110,y=80,width=430,height=30)
 
 # Programa 02
 if os.path.exists(caminho_02):
@@ -795,17 +989,28 @@ if os.path.exists(caminho_02):
         texto = arquivo.readlines()
         texto = [x.strip('\n') for x in texto]
         caminho = Label(root,text=texto).place(x=110,y=120,width=430,height=30)
-        label_programa_02 = Label(root,text='Programa 02:',anchor=W).place(x=10,y=120,width=110,height=30)
-        botao_excluir_programa_01 = Button(root,text='Excluir',command = lambda: excluir_caminho_02()).place(x=550,y=120,width=60,height=30)
-        botao_abrir_programa_01 = Button(root,text='Abrir',command=lambda:abrir_programa_02()).place(x=620,y=120,width=60,height=30)
-        
+        if idioma == 0:
+            label_programa_02 = Label(root,text='Programa 02:',anchor=W).place(x=10,y=120,width=110,height=30)
+            botao_excluir_programa_01 = Button(root,text='Excluir',command = lambda: excluir_caminho_02()).place(x=550,y=120,width=60,height=30)
+            botao_abrir_programa_01 = Button(root,text='Abrir',command=lambda:abrir_programa_02()).place(x=620,y=120,width=60,height=30)
+        if idioma == 1:
+            label_programa_02 = Label(root,text='Program 02:',anchor=W).place(x=10,y=120,width=110,height=30)
+            botao_excluir_programa_01 = Button(root,text='Delete',command = lambda: excluir_caminho_02()).place(x=550,y=120,width=60,height=30)
+            botao_abrir_programa_01 = Button(root,text='Open',command=lambda:abrir_programa_02()).place(x=620,y=120,width=60,height=30)     
 else:
-    label_programa_02 = Label(root,text='Programa 02:',anchor=W).place(x=10,y=120,width=110,height=30)
-    botao_inserir_programa_02 = Button(root, text='Inserir', command = lambda: salvar_caminho_02(caminho_programa_02)).place(x=550,y=120,width=60,height=30)
-    botao_procurar_programa_02 = Button(root, text='Procurar', command = lambda: escolher_caminho_02()).place(x=620,y=120,width=60,height=30)
+    if idioma == 0:
+        label_programa_02 = Label(root,text='Programa 02:',anchor=W).place(x=10,y=120,width=110,height=30)
+        botao_inserir_programa_02 = Button(root, text='Inserir', command = lambda: salvar_caminho_02(caminho_programa_02)).place(x=550,y=120,width=60,height=30)
+        botao_procurar_programa_02 = Button(root, text='Procurar', command = lambda: escolher_caminho_02()).place(x=620,y=120,width=60,height=30)
+        caminho_programa_02 = Entry(root)
+        caminho_programa_02.place(x=110,y=120,width=430,height=30)
+    if idioma == 1:
+        label_programa_02 = Label(root,text='Program 02:',anchor=W).place(x=10,y=120,width=110,height=30)
+        botao_inserir_programa_02 = Button(root, text='Add', command = lambda: salvar_caminho_02(caminho_programa_02)).place(x=550,y=120,width=60,height=30)
+        botao_procurar_programa_02 = Button(root, text='Search', command = lambda: escolher_caminho_02()).place(x=620,y=120,width=60,height=30)
+        caminho_programa_02 = Entry(root)
+        caminho_programa_02.place(x=110,y=120,width=430,height=30)
 
-    caminho_programa_02 = Entry(root)
-    caminho_programa_02.place(x=110,y=120,width=430,height=30)
 
 # Programa 03
 if os.path.exists(caminho_03):
@@ -813,18 +1018,27 @@ if os.path.exists(caminho_03):
         texto = arquivo.readlines()
         texto = [x.strip('\n') for x in texto]
         caminho = Label(root,text=texto).place(x=110,y=160,width=430,height=30)
-        label_programa_03 = Label(root,text='Programa 03:',anchor=W).place(x=10,y=160,width=110,height=30)
-        botao_excluir_programa_03 = Button(root,text='Excluir',command = lambda: excluir_caminho_03()).place(x=550,y=160,width=60,height=30)
-        botao_abrir_programa_03 = Button(root,text='Abrir',command=lambda:abrir_programa_03()).place(x=620,y=160,width=60,height=30)
-        
+        if idioma == 0:
+            label_programa_03 = Label(root,text='Programa 03:',anchor=W).place(x=10,y=160,width=110,height=30)
+            botao_excluir_programa_03 = Button(root,text='Excluir',command = lambda: excluir_caminho_03()).place(x=550,y=160,width=60,height=30)
+            botao_abrir_programa_03 = Button(root,text='Abrir',command=lambda:abrir_programa_03()).place(x=620,y=160,width=60,height=30)
+        if idioma == 1:
+            label_programa_03 = Label(root,text='Program 03:',anchor=W).place(x=10,y=160,width=110,height=30)
+            botao_excluir_programa_03 = Button(root,text='Delete',command = lambda: excluir_caminho_03()).place(x=550,y=160,width=60,height=30)
+            botao_abrir_programa_03 = Button(root,text='Open',command=lambda:abrir_programa_03()).place(x=620,y=160,width=60,height=30)      
 else:
-    label_programa_03 = Label(root,text='Programa 03:',anchor=W).place(x=10,y=160,width=110,height=30)
-    botao_inserir_programa_03 = Button(root, text='Inserir', command = lambda: salvar_caminho_03(caminho_programa_03)).place(x=550,y=160,width=60,height=30)
-    botao_procurar_programa_03 = Button(root, text='Procurar', command = lambda: escolher_caminho_03()).place(x=620,y=160,width=60,height=30)
-
-
-    caminho_programa_03 = Entry(root)
-    caminho_programa_03.place(x=110,y=160,width=430,height=30)
+    if idioma == 0:
+        label_programa_03 = Label(root,text='Programa 03:',anchor=W).place(x=10,y=160,width=110,height=30)
+        botao_inserir_programa_03 = Button(root, text='Inserir', command = lambda: salvar_caminho_03(caminho_programa_03)).place(x=550,y=160,width=60,height=30)
+        botao_procurar_programa_03 = Button(root, text='Procurar', command = lambda: escolher_caminho_03()).place(x=620,y=160,width=60,height=30)
+        caminho_programa_03 = Entry(root)
+        caminho_programa_03.place(x=110,y=160,width=430,height=30)
+    if idioma == 1:
+        label_programa_03 = Label(root,text='Program 03:',anchor=W).place(x=10,y=160,width=110,height=30)
+        botao_inserir_programa_03 = Button(root, text='Add', command = lambda: salvar_caminho_03(caminho_programa_03)).place(x=550,y=160,width=60,height=30)
+        botao_procurar_programa_03 = Button(root, text='Search', command = lambda: escolher_caminho_03()).place(x=620,y=160,width=60,height=30)
+        caminho_programa_03 = Entry(root)
+        caminho_programa_03.place(x=110,y=160,width=430,height=30)
 
 # Programa 04
 if os.path.exists(caminho_04):
@@ -832,18 +1046,27 @@ if os.path.exists(caminho_04):
         texto = arquivo.readlines()
         texto = [x.strip('\n') for x in texto]
         caminho = Label(root,text=texto).place(x=110,y=200,width=430,height=30)
-        label_programa_04 = Label(root,text='Programa 04:',anchor=W).place(x=10,y=200,width=110,height=30)
-        botao_excluir_programa_04 = Button(root,text='Excluir',command = lambda: excluir_caminho_04()).place(x=550,y=200,width=60,height=30)
-        botao_abrir_programa_04 = Button(root,text='Abrir',command=lambda:abrir_programa_04()).place(x=620,y=200,width=60,height=30)
-        
+        if idioma == 0:
+            label_programa_04 = Label(root,text='Programa 04:',anchor=W).place(x=10,y=200,width=110,height=30)
+            botao_excluir_programa_04 = Button(root,text='Excluir',command = lambda: excluir_caminho_04()).place(x=550,y=200,width=60,height=30)
+            botao_abrir_programa_04 = Button(root,text='Abrir',command=lambda:abrir_programa_04()).place(x=620,y=200,width=60,height=30)
+        if idioma == 1:
+            label_programa_04 = Label(root,text='Program 04:',anchor=W).place(x=10,y=200,width=110,height=30)
+            botao_excluir_programa_04 = Button(root,text='Delete',command = lambda: excluir_caminho_04()).place(x=550,y=200,width=60,height=30)
+            botao_abrir_programa_04 = Button(root,text='Open',command=lambda:abrir_programa_04()).place(x=620,y=200,width=60,height=30)
 else:
-    label_programa_04 = Label(root,text='Programa 04:',anchor=W).place(x=10,y=200,width=110,height=30)
-    botao_inserir_programa_04 = Button(root, text='Inserir', command = lambda: salvar_caminho_04(caminho_programa_04)).place(x=550,y=200,width=60,height=30)
-    botao_procurar_programa_04 = Button(root, text='Procurar', command = lambda: escolher_caminho_04()).place(x=620,y=200,width=60,height=30)
-
-
-    caminho_programa_04 = Entry(root)
-    caminho_programa_04.place(x=110,y=200,width=430,height=30)
+    if idioma == 0:
+        label_programa_04 = Label(root,text='Programa 04:',anchor=W).place(x=10,y=200,width=110,height=30)
+        botao_inserir_programa_04 = Button(root, text='Inserir', command = lambda: salvar_caminho_04(caminho_programa_04)).place(x=550,y=200,width=60,height=30)
+        botao_procurar_programa_04 = Button(root, text='Procurar', command = lambda: escolher_caminho_04()).place(x=620,y=200,width=60,height=30)
+        caminho_programa_04 = Entry(root)
+        caminho_programa_04.place(x=110,y=200,width=430,height=30)
+    if idioma == 1:
+        label_programa_04 = Label(root,text='Program 04:',anchor=W).place(x=10,y=200,width=110,height=30)
+        botao_inserir_programa_04 = Button(root, text='Add', command = lambda: salvar_caminho_04(caminho_programa_04)).place(x=550,y=200,width=60,height=30)
+        botao_procurar_programa_04 = Button(root, text='Search', command = lambda: escolher_caminho_04()).place(x=620,y=200,width=60,height=30)
+        caminho_programa_04 = Entry(root)
+        caminho_programa_04.place(x=110,y=200,width=430,height=30)
 
 # Programa 05
 if os.path.exists(caminho_05):
@@ -851,17 +1074,27 @@ if os.path.exists(caminho_05):
         texto = arquivo.readlines()
         texto = [x.strip('\n') for x in texto]
         caminho = Label(root,text=texto).place(x=110,y=240,width=430,height=30)
-        label_programa_05 = Label(root,text='Programa 05:',anchor=W).place(x=10,y=240,width=110,height=30)
-        botao_excluir_programa_05 = Button(root,text='Excluir',command = lambda: excluir_caminho_05()).place(x=550,y=240,width=60,height=30)
-        botao_abrir_programa_05 = Button(root,text='Abrir',command=lambda:abrir_programa_05()).place(x=620,y=240,width=60,height=30)
-        
+        if idioma == 0:
+            label_programa_05 = Label(root,text='Programa 05:',anchor=W).place(x=10,y=240,width=110,height=30)
+            botao_excluir_programa_05 = Button(root,text='Excluir',command = lambda: excluir_caminho_05()).place(x=550,y=240,width=60,height=30)
+            botao_abrir_programa_05 = Button(root,text='Abrir',command=lambda:abrir_programa_05()).place(x=620,y=240,width=60,height=30)
+        if idioma == 1:
+            label_programa_05 = Label(root,text='Program 05:',anchor=W).place(x=10,y=240,width=110,height=30)
+            botao_excluir_programa_05 = Button(root,text='Delete',command = lambda: excluir_caminho_05()).place(x=550,y=240,width=60,height=30)
+            botao_abrir_programa_05 = Button(root,text='Open',command=lambda:abrir_programa_05()).place(x=620,y=240,width=60,height=30)        
 else:
-    label_programa_05 = Label(root,text='Programa 05:',anchor=W).place(x=10,y=240,width=110,height=30)
-    botao_inserir_programa_05 = Button(root, text='Inserir', command = lambda: salvar_caminho_05(caminho_programa_05)).place(x=550,y=240,width=60,height=30)
-    botao_procurar_programa_05 = Button(root, text='Procurar', command = lambda: escolher_caminho_05()).place(x=620,y=240,width=60,height=30)
-
-    caminho_programa_05 = Entry(root)
-    caminho_programa_05.place(x=110,y=240,width=430,height=30)
+    if idioma == 0:
+        label_programa_05 = Label(root,text='Programa 05:',anchor=W).place(x=10,y=240,width=110,height=30)
+        botao_inserir_programa_05 = Button(root, text='Inserir', command = lambda: salvar_caminho_05(caminho_programa_05)).place(x=550,y=240,width=60,height=30)
+        botao_procurar_programa_05 = Button(root, text='Procurar', command = lambda: escolher_caminho_05()).place(x=620,y=240,width=60,height=30)
+        caminho_programa_05 = Entry(root)
+        caminho_programa_05.place(x=110,y=240,width=430,height=30)
+    if idioma == 1:
+        label_programa_05 = Label(root,text='Program 05:',anchor=W).place(x=10,y=240,width=110,height=30)
+        botao_inserir_programa_05 = Button(root, text='Add', command = lambda: salvar_caminho_05(caminho_programa_05)).place(x=550,y=240,width=60,height=30)
+        botao_procurar_programa_05 = Button(root, text='Search', command = lambda: escolher_caminho_05()).place(x=620,y=240,width=60,height=30)
+        caminho_programa_05 = Entry(root)
+        caminho_programa_05.place(x=110,y=240,width=430,height=30)
 
 # Programa 06
 if os.path.exists(caminho_06):
@@ -869,27 +1102,42 @@ if os.path.exists(caminho_06):
         texto = arquivo.readlines()
         texto = [x.strip('\n') for x in texto]
         caminho = Label(root,text=texto).place(x=110,y=280,width=430,height=30)
-        label_programa_06 = Label(root,text='Programa 06:',anchor=W).place(x=10,y=280,width=110,height=30)
-        botao_excluir_programa_06 = Button(root,text='Excluir',command = lambda: excluir_caminho_06()).place(x=550,y=280,width=60,height=30)
-        botao_abrir_programa_06 = Button(root,text='Abrir',command=lambda:abrir_programa_06()).place(x=620,y=280,width=60,height=30)
+        if idioma == 0:
+            label_programa_06 = Label(root,text='Programa 06:',anchor=W).place(x=10,y=280,width=110,height=30)
+            botao_excluir_programa_06 = Button(root,text='Excluir',command = lambda: excluir_caminho_06()).place(x=550,y=280,width=60,height=30)
+            botao_abrir_programa_06 = Button(root,text='Abrir',command=lambda:abrir_programa_06()).place(x=620,y=280,width=60,height=30)
+        if idioma == 1:
+            label_programa_06 = Label(root,text='Program 06:',anchor=W).place(x=10,y=280,width=110,height=30)
+            botao_excluir_programa_06 = Button(root,text='Delete',command = lambda: excluir_caminho_06()).place(x=550,y=280,width=60,height=30)
+            botao_abrir_programa_06 = Button(root,text='Open',command=lambda:abrir_programa_06()).place(x=620,y=280,width=60,height=30)
         
 else:
-    label_programa_06 = Label(root,text='Programa 06:',anchor=W).place(x=10,y=280,width=110,height=30)
-    botao_inserir_programa_06 = Button(root, text='Inserir', command = lambda: salvar_caminho_06(caminho_programa_06)).place(x=550,y=280,width=60,height=30)
-    botao_procurar_programa_06 = Button(root, text='Procurar', command = lambda: escolher_caminho_06()).place(x=620,y=280,width=60,height=30)
-
-
-    caminho_programa_06 = Entry(root)
-    caminho_programa_06.place(x=110,y=280,width=430,height=30)
+    if idioma == 0:
+        label_programa_06 = Label(root,text='Programa 06:',anchor=W).place(x=10,y=280,width=110,height=30)
+        botao_inserir_programa_06 = Button(root, text='Inserir', command = lambda: salvar_caminho_06(caminho_programa_06)).place(x=550,y=280,width=60,height=30)
+        botao_procurar_programa_06 = Button(root, text='Procurar', command = lambda: escolher_caminho_06()).place(x=620,y=280,width=60,height=30)
+        caminho_programa_06 = Entry(root)
+        caminho_programa_06.place(x=110,y=280,width=430,height=30)
+    if idioma == 1:
+        label_programa_06 = Label(root,text='Program 06:',anchor=W).place(x=10,y=280,width=110,height=30)
+        botao_inserir_programa_06 = Button(root, text='Add', command = lambda: salvar_caminho_06(caminho_programa_06)).place(x=550,y=280,width=60,height=30)
+        botao_procurar_programa_06 = Button(root, text='Search', command = lambda: escolher_caminho_06()).place(x=620,y=280,width=60,height=30)
+        caminho_programa_06 = Entry(root)
+        caminho_programa_06.place(x=110,y=280,width=430,height=30)
 
 
 #Botão abrir todos os programas
-botao_abrir_todos = Button(root,text='Abrir todos', command= abrir_todos).place(x=110,y=340,width=430,height=30)
+if idioma == 0:
+    botao_abrir_todos = Button(root,text='Abrir todos', command= abrir_todos).place(x=110,y=340,width=430,height=30)   
+if idioma == 1:
+    botao_abrir_todos = Button(root,text='Open all', command= abrir_todos).place(x=110,y=340,width=430,height=30)   
 
 
 #Botão ajuda
-botao_ajuda = Button(root,text='Ajuda', command = lambda: ajuda()).place(x=550,y=340,width=130,height=30)
-
+if idioma == 0:
+    botao_ajuda = Button(root,text='Ajuda', command = lambda: ajuda()).place(x=550,y=340,width=130,height=30)
+if idioma == 1:
+    botao_ajuda = Button(root,text='Help', command = lambda: ajuda()).place(x=550,y=340,width=130,height=30)
 
 # Versão do programa
 versao = Label(root,text='v. 0.9.0 (Alpha)').place(x=580,y=0,width=130,height=30)
